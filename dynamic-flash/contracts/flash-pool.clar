@@ -1,5 +1,4 @@
 ;; Title: Dynamic Interest Rate Flash Loan Pool
-;; Version: 1.0.0
 ;; Description: A flash loan contract with dynamic interest rates based on pool utilization
 
 ;; Constants for contract configuration
@@ -7,6 +6,8 @@
 (define-constant PRECISION u10000)  ;; 4 decimal points precision for rates
 (define-constant MIN-LIQUIDITY u1000000) ;; Minimum pool liquidity required
 (define-constant MAX-UTILIZATION u9000)  ;; 90% maximum pool utilization
+(define-constant MIN-RATE-MULTIPLIER u50)  ;; Minimum 0.5x multiplier
+(define-constant MAX-RATE-MULTIPLIER u500) ;; Maximum 5x multiplier
 
 ;; Error codes
 (define-constant ERR-NOT-AUTHORIZED (err u1000))
@@ -75,7 +76,13 @@
 
 (define-public (update-rate-multiplier (new-multiplier uint))
     (begin
+        ;; Check authorization
         (asserts! (is-eq tx-sender contract-owner) ERR-NOT-AUTHORIZED)
+        ;; Validate multiplier range
+        (asserts! (and (>= new-multiplier MIN-RATE-MULTIPLIER)
+                      (<= new-multiplier MAX-RATE-MULTIPLIER))
+                 ERR-INVALID-AMOUNT)
+        ;; Set new multiplier if validation passes
         (ok (var-set rate-multiplier new-multiplier))))
 
 ;; -------------------- Core Pool Functions --------------------
