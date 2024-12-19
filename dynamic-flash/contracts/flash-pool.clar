@@ -1,6 +1,3 @@
-;; Title: Dynamic Interest Rate Flash Loan Pool
-;; Description: A flash loan contract with dynamic interest rates based on pool utilization
-
 ;; Constants for contract configuration
 (define-constant contract-owner tx-sender)
 (define-constant PRECISION u10000)  ;; 4 decimal points precision for rates
